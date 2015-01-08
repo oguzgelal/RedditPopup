@@ -1,0 +1,55 @@
+.popupFrame {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 99999;
+  text-align: center;
+}
+
+.frameContainer {
+  position: relative;
+  width: 95%;
+  height: 90%;
+  margin: auto;
+  margin-top: 30px;
+  overflow: hidden;
+  background-color: white;
+}
+.frameContainer iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+.buttonContainer {
+  position: absolute;
+  top: 15px;
+  right: 2.5%;
+  margin-right: -15px;
+}
+
+.closeButton, .browseButton {
+  display: inline-block;
+  color: white;
+  background-color: black;
+  padding: 5px 10px;
+  height: 18px;
+  line-height: 18px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  z-index: 100000;
+}
+.closeButton:hover, .browseButton:hover {
+  cursor: pointer;
+  background-color: #401C5A;
+}
+.closeButton:active, .browseButton:active {
+  cursor: pointer;
+  background-color: lightblue;
+}
