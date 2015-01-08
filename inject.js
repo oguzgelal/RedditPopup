@@ -29,6 +29,12 @@ $(document).on('click', '.browseButton', function(){
 	iframeClose();
 });
 
+$(document).keyup(function(e) {
+  if (e.keyCode == 27) {
+  	iframeClose();
+  }
+});
+
 
 
 // Open up iframe
