@@ -1,0 +1,15 @@
+Version 1.3
+Twitter links are that can't load are now bypassed.
+CMD + Click on OS X, CTRL + Click on Windows now bypasses the popup and directly opens links in a new tab.
+Clicking outside now closes the popup.
+Loading spinners and warnings.
+
+Version 1.2
+Application icon now opens up Reddit in a new tab.
+Youtube links that can't be opened in an iFrame are bypassed and opened in a new tab.
+
+Version 1.1
+Press ESC to close the popup added.
+
+Version 1
+Hello, World !

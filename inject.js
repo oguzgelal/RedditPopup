@@ -1,7 +1,7 @@
 var html = " \
 <div class='popupFrame'> \
 <div class='frameContainer'> \
-<iframe src=''></iframe> \
+<iframe src='http://oguzgelal.com/redditpopup/loading.html'></iframe> \
 </div> \
 <div class='buttonContainer'> \
 <div class='browseButton'>New Tab</div> \
@@ -16,7 +16,9 @@ $(document).ready(function(){
 $(document).on('click', 'a.title', function(e){
 	e.preventDefault();
 	var url = $(this).prop('href');
-	iframeOpen(url);
+  if (e.ctrlKey || e.metaKey){ window.open(url, '_new'); }
+  else { iframeOpen(url); }
+
 });
 
 $(document).on('click', '.closeButton', function(){
@@ -35,16 +37,23 @@ $(document).keyup(function(e) {
   }
 });
 
+$(document).on('click', '.popupFrame:not(.frameContainer)', function(){
+  iframeClose();
+});
+
 
 
 // Open up iframe
 function iframeOpen(url){
-  // Disable page scroll
-  $('body').css('overflow', 'hidden');
-  $('body').css('height', '100%');
-  // Set iframe src and open popup
-  $('.popupFrame .frameContainer iframe').prop('src', url);
-  $('.popupFrame').fadeIn('fast');
+  if (!allowedUrl(url)){ window.open(url, '_new'); }
+  else {
+    // Disable page scroll
+    $('body').css('overflow', 'hidden');
+    $('body').css('height', '100%');
+    // Set iframe src and open popup
+    $('.popupFrame .frameContainer iframe').prop('src', url);
+    $('.popupFrame').fadeIn('fast');  
+  }
 }
 
 // Close iframe
@@ -54,5 +63,25 @@ function iframeClose(){
   $('body').css('height', 'auto');
   // Close popup
   $('.popupFrame').hide();
-  $('.popupFrame .frameContainer iframe').prop('src', 'about:blank');
+  $('.popupFrame .frameContainer iframe').prop('src', 'http://oguzgelal.com/redditpopup/loading.html');
 }
+
+function allowedUrl(url){
+  var allowed = true;
+  var notallowed = [
+  "youtube.com",
+  "youtu.be",
+  "chrome.google.com/webstore",
+  "twitter.com"
+  ];
+  for(var i = 0; i < notallowed.length; i++){
+    var match = url.match(new RegExp(notallowed[i], 'gi'));
+    if (match && match.length > 0){
+      allowed = false;
+    }
+  }
+  return allowed;
+}
+
+
+
