@@ -11,6 +11,7 @@ var html = " \
 
 $(document).ready(function(){
 	$('body').append(html);	
+  $('.popupFrame .frameContainer iframe').prop('src', 'http://oguzgelal.com/redditpopup/loading.html');
 });
 
 $(document).on('click', 'a.title', function(e){
@@ -47,6 +48,7 @@ $(document).on('click', '.popupFrame:not(.frameContainer)', function(){
 function iframeOpen(url){
   if (!allowedUrl(url)){ window.open(url, '_new'); }
   else {
+    $('.popupFrame .frameContainer iframe').prop('src', 'http://oguzgelal.com/redditpopup/loading.html');
     // Disable page scroll
     $('body').css('overflow', 'hidden');
     $('body').css('height', '100%');
