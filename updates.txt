@@ -1,3 +1,6 @@
+Version 1.3.3
+Previously, iFrame would remember history of previous pages and going back would cycle through them.  This no longer occurs and going back will close the popup.
+
 Version 1.3.2
 Removed need for jQuery
 Downloaded waiting page for ease of access
