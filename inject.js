@@ -36,6 +36,9 @@ for(var i = 0; i < links.length; i++) {
 	links[i].addEventListener("click", function(e) {
 		e.preventDefault();
 		var url = this.href;
+		if(location.href.indexOf("https://") >= 0 && this.href.indexOf("https://") == -1) {
+			url = url.replace("http://", "https://");
+		}
 		if(e.ctrlKey || e.metaKey){
 			window.open(url, '_new');
 		} else {
@@ -102,6 +105,7 @@ function iframeClose(){
   popupFrame.className = "";
   contentFrame.src = "";
   history.pushState({state: 1}, document.title, location.href.substring(0, location.href.indexOf("?page=")));
+  clearInterval(interval);
 }
 
 // iFrames do not work on X-Frame-Options SAMEORIGIN sites
@@ -121,14 +125,14 @@ function allowedUrl(url){
   return true;
 }
 
+var interval;
 function checkForBack() {
 	var body;
 	checked = true;
-	var interval = setInterval(function() {
+	interval = setInterval(function() {
 		body = contentFrame.contentWindow.document.querySelector("body");
 		if(popupFrame.className == "fadeIn" && (location.search.indexOf("?page=") == -1 || (location.search.replace("?page=", "") + location.hash) != contentFrame.src || (body && body.children.length == 0))) {
 			iframeClose();
-			clearInterval(interval);
 		}
 	}, 100);
 }
