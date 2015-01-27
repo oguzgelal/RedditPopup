@@ -36,7 +36,7 @@ buttonContainer.appendChild(closeButton);
 var body = document.body;
 body.appendChild(popupFrame);
 
-var links = document.querySelectorAll("a.title");
+var links = document.querySelectorAll("a.title, a.thumbnail, .md a, a.author, .deepthread a, .pagename a, a.reddit-link-title, a.subreddit, a.comments, .domain a");
 for(var i = 0; i < links.length; i++) {
 	links[i].addEventListener("click", function(e) {
 		e.preventDefault();
