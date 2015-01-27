@@ -18,6 +18,11 @@ var buttonContainer = document.createElement("div");
 buttonContainer.id = "buttonContainer";
 popupFrame.appendChild(buttonContainer);
 
+var openButton = document.createElement("div");
+openButton.id = "openButton";
+openButton.innerHTML = "Open";
+buttonContainer.appendChild(openButton);
+
 var browseButton = document.createElement("div");
 browseButton.id = "browseButton";
 browseButton.innerHTML = "New Tab";
@@ -44,6 +49,10 @@ for(var i = 0; i < links.length; i++) {
 		return false;
 	})
 }
+
+openButton.addEventListener("mouseup", function(){
+	document.location.href = contentFrame.src;
+});
 
 closeButton.addEventListener("mouseup", function(){
 	iframeClose();
