@@ -42,7 +42,7 @@ for(var i = 0; i < links.length; i++) {
 		e.preventDefault();
 		var url = this.href.replace(/http.?:\/\//, "//");
 		if(e.ctrlKey || e.metaKey){
-			window.open(url, '_new');
+			window.open(url, '_blank');
 		} else {
 			iframeOpen(url, this.innerHTML);
 		}
@@ -51,7 +51,8 @@ for(var i = 0; i < links.length; i++) {
 }
 
 openButton.addEventListener("mouseup", function(){
-	document.location.href = contentFrame.src;
+	clearInterval(hasClosed);
+	window.open(contentFrame.src.replace("https://", "http://"), "_self");
 });
 
 closeButton.addEventListener("mouseup", function(){
@@ -59,7 +60,7 @@ closeButton.addEventListener("mouseup", function(){
 });
 
 browseButton.addEventListener("mouseup", function(){
-	window.open(contentFrame.src, '_new');
+	window.open(contentFrame.src.replace("https://", "http://"), '_blank');
 	iframeClose();
 });
 
@@ -90,7 +91,7 @@ contentFrame.addEventListener("load", function() {
 // Open up iframe
 function iframeOpen(url, title){
   if (!allowedUrl(url)){
-     window.open(url, '_new');
+     window.open(url, '_blank');
   } else {
     // Disable page scroll
     body.style.overflow = "hidden";
@@ -104,7 +105,7 @@ function iframeOpen(url, title){
     failedToLoad = setTimeout(function() {
       contentFrameBody = contentFrame.contentWindow.document.querySelector("body");
       if(contentFrameBody && contentFrameBody.children.length == 0) {
-        window.open(url.replace("//", "http://"), '_new');
+        window.open(url.replace("//", "http://"), '_blank');
         checked = true;
         iframeClose();
       }
