@@ -42,10 +42,11 @@
   margin-right: -15px;
 }
 
-#browseButton, #closeButton {
+#buttonContainer div {
   display: inline-block;
   color: white;
   background-color: black;
+  margin-right: 2px;
   padding: 5px 10px;
   height: 18px;
   line-height: 18px;
@@ -53,8 +54,7 @@
   border-radius: 10px;
   z-index: 100000;
 }
-#browseButton { margin-right: 2px; }
-#browseButton:hover, #closeButton:hover {
+#buttonContainer div:hover {
   cursor: pointer;
   background-color: #5f99cf;
 }

@@ -18,6 +18,11 @@ var buttonContainer = document.createElement("div");
 buttonContainer.id = "buttonContainer";
 popupFrame.appendChild(buttonContainer);
 
+var openButton = document.createElement("div");
+openButton.id = "openButton";
+openButton.innerHTML = "Open";
+buttonContainer.appendChild(openButton);
+
 var browseButton = document.createElement("div");
 browseButton.id = "browseButton";
 browseButton.innerHTML = "New Tab";
@@ -28,19 +33,16 @@ closeButton.id = "closeButton";
 closeButton.innerHTML = "Close";
 buttonContainer.appendChild(closeButton);
 
-var body = document.getElementsByTagName("body")[0];
+var body = document.body;
 body.appendChild(popupFrame);
 
-var links = document.querySelectorAll("a.title");
+var links = document.querySelectorAll("a.title, a.thumbnail, .md a, a.author, .deepthread a, .pagename a, a.reddit-link-title, a.subreddit, a.comments, .domain a");
 for(var i = 0; i < links.length; i++) {
 	links[i].addEventListener("click", function(e) {
 		e.preventDefault();
-		var url = this.href;
-		if(location.href.indexOf("https://") >= 0 && this.href.indexOf("https://") == -1) {
-			url = url.replace("http://", "https://");
-		}
+		var url = this.href.replace(/http.?:\/\//, "//");
 		if(e.ctrlKey || e.metaKey){
-			window.open(url, '_new');
+			window.open(url, '_blank');
 		} else {
 			iframeOpen(url, this.innerHTML);
 		}
@@ -48,12 +50,17 @@ for(var i = 0; i < links.length; i++) {
 	})
 }
 
+openButton.addEventListener("mouseup", function(){
+	clearInterval(hasClosed);
+	window.open(contentFrame.src.replace("https://", "http://"), "_self");
+});
+
 closeButton.addEventListener("mouseup", function(){
 	iframeClose();
 });
 
 browseButton.addEventListener("mouseup", function(){
-	window.open(contentFrame.src, '_new');
+	window.open(contentFrame.src.replace("https://", "http://"), '_blank');
 	iframeClose();
 });
 
@@ -67,22 +74,24 @@ document.querySelector("#popupFrame:not(#frameContainer)").addEventListener("mou
   iframeClose();
 });
 
-var checked = false;
+if(document.location.hash.indexOf("page=") >= 0) {
+	var url = document.location.hash.replace("#page=", "");
+	iframeOpen(url, "");
+}
+
+var checked = false, hasClosed, contentFrameBody, failedToLoad;
 contentFrame.addEventListener("load", function() {
 	contentFrame.style.display = "block";
+	clearTimeout(failedToLoad);
 	if(!checked) {
 		checkForBack();
 	}
 });
 
-contentFrame.addEventListener("unload", function() {
-	iframeClose();
-});
-
 // Open up iframe
 function iframeOpen(url, title){
   if (!allowedUrl(url)){
-     window.open(url, '_new');
+     window.open(url, '_blank');
   } else {
     // Disable page scroll
     body.style.overflow = "hidden";
@@ -91,8 +100,16 @@ function iframeOpen(url, title){
     contentFrame.style.display = "none";
     contentFrame.src = url;
     popupFrame.className = "fadeIn";
-    history.pushState({state: 1}, title, "?page=" + url);
+    history.pushState({state: 1}, title, "#page=" + url);
     checked = false;
+    failedToLoad = setTimeout(function() {
+      contentFrameBody = contentFrame.contentWindow.document.querySelector("body");
+      if(contentFrameBody && contentFrameBody.children.length == 0) {
+        window.open(url.replace("//", "http://"), '_blank');
+        checked = true;
+        iframeClose();
+      }
+    }, 5000);
   }
 }
 
@@ -104,8 +121,8 @@ function iframeClose(){
   // Close popup
   popupFrame.className = "";
   contentFrame.src = "";
-  history.pushState({state: 1}, document.title, location.href.substring(0, location.href.indexOf("?page=")));
-  clearInterval(interval);
+  history.pushState({state: 1}, document.title, document.location.href.substring(0, document.location.href.indexOf("#page=")));
+  clearInterval(hasClosed);
 }
 
 // iFrames do not work on X-Frame-Options SAMEORIGIN sites
@@ -125,13 +142,11 @@ function allowedUrl(url){
   return true;
 }
 
-var interval;
 function checkForBack() {
-	var body;
 	checked = true;
-	interval = setInterval(function() {
-		body = contentFrame.contentWindow.document.querySelector("body");
-		if(popupFrame.className == "fadeIn" && (location.search.indexOf("?page=") == -1 || (location.search.replace("?page=", "") + location.hash) != contentFrame.src || (body && body.children.length == 0))) {
+	hasClosed = setInterval(function() {
+		contentFrameBody = contentFrame.contentWindow.document.querySelector("body");
+		if(popupFrame.className == "fadeIn" && (document.location.hash.indexOf("#page=") == -1 || document.location.hash.replace("#page=", "") != contentFrame.src.replace(/http.?:\/\//, "//") || (contentFrameBody && contentFrameBody.children.length == 0))) {
 			iframeClose();
 		}
 	}, 100);
