@@ -36,19 +36,7 @@ buttonContainer.appendChild(closeButton);
 var body = document.body;
 body.appendChild(popupFrame);
 
-var links = document.querySelectorAll("a.title, a.thumbnail, .md a, a.author, .deepthread a, .pagename a, a.reddit-link-title, a.subreddit, a.comments, .domain a");
-for(var i = 0; i < links.length; i++) {
-	links[i].addEventListener("click", function(e) {
-		e.preventDefault();
-		var url = this.href.replace(/http.?:\/\//, "//");
-		if(e.ctrlKey || e.metaKey){
-			window.open(url, '_blank');
-		} else {
-			iframeOpen(url, this.innerHTML);
-		}
-		return false;
-	})
-}
+scanLinks(body);
 
 openButton.addEventListener("mouseup", function(){
 	clearInterval(hasClosed);
@@ -86,7 +74,26 @@ contentFrame.addEventListener("load", function() {
 	if(!checked) {
 		checkForBack();
 	}
+	if(this.src.indexOf(location.hostname) >= 0 && this.contentDocument.location.hostname == location.hostname) {
+		scanLinks(contentFrame.contentDocument);
+	}
 });
+
+function scanLinks(container) {
+	var links = container.querySelectorAll("a.title, a.thumbnail, .md a, a.author, .deepthread a, .pagename a, a.reddit-link-title, a.subreddit, a.comments, .domain a");
+	for(var i = 0; i < links.length; i++) {
+		links[i].addEventListener("click", function(e) {
+			e.preventDefault();
+			var url = this.href.replace(/http.?:\/\//, "//");
+			if(e.ctrlKey || e.metaKey){
+				window.open(url, '_blank');
+			} else {
+				iframeOpen(url, this.innerHTML);
+			}
+			return false;
+		})
+	}
+}
 
 // Open up iframe
 function iframeOpen(url, title){
