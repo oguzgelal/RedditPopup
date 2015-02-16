@@ -1,9 +1,27 @@
+Version 1.5.0
+If the popup loads a reddit page, all links on the popup will change the popup instead of opening in a new tab.
+
+Version 1.4.3
+Popup now defaults to opening in a new tab instead of a new window (still depends on browser settings).
+
+Version 1.4.2
+Added more selectors for links to be opened by the popup.
+
+Version 1.4.1
+Added "Open" button to open the current popup page in the same tab.
+
+Version 1.4.0
+Added check to see if the popup loads within 5 seconds.  If it doesn't, automatically open it in a new tab and close the popup.
+
+Version 1.3.4
+Fixed issues with HTTPS.
+
 Version 1.3.3
 Previously, iFrame would remember history of previous pages and going back would cycle through them.  This no longer occurs and going back will close the popup.
 
 Version 1.3.2
-Removed need for jQuery
-Downloaded waiting page for ease of access
+Removed need for jQuery.
+Downloaded waiting page for ease of access.
 
 Version 1.3.1
 Minor fixes.
