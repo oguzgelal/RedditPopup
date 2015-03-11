@@ -48,7 +48,7 @@ closeButton.addEventListener("mouseup", function(){
 });
 
 browseButton.addEventListener("mouseup", function(){
-	window.open(contentFrame.src.replace("https://", "http://"), '_blank');
+	chrome.runtime.sendMessage({newTab: contentFrame.src});
 	iframeClose();
 });
 
@@ -84,11 +84,10 @@ function scanLinks(container) {
 	for(var i = 0; i < links.length; i++) {
 		links[i].addEventListener("click", function(e) {
 			e.preventDefault();
-			var url = this.href.replace(/http.?:\/\//, "//");
 			if(e.ctrlKey || e.metaKey){
-				window.open(url, '_blank');
+				chrome.runtime.sendMessage({newTab: this.href});
 			} else {
-				iframeOpen(url, this.innerHTML);
+				iframeOpen(this.href, this.innerHTML);
 			}
 			return false;
 		})
@@ -98,21 +97,21 @@ function scanLinks(container) {
 // Open up iframe
 function iframeOpen(url, title){
   if (!allowedUrl(url)){
-     window.open(url, '_blank');
+     chrome.runtime.sendMessage({newTab: url});
   } else {
     // Disable page scroll
     body.style.overflow = "hidden";
     body.style.height = "100%";
     // Set iframe src and open popup
     contentFrame.style.display = "none";
-    contentFrame.src = url;
+    contentFrame.src = url.replace(/http.?:\/\//, "//");
     popupFrame.className = "fadeIn";
-    history.pushState({state: 1}, title, "#page=" + url);
+    history.pushState({state: 1}, title, "#page=" + url.replace(/http.?:\/\//, "//"));
     checked = false;
     failedToLoad = setTimeout(function() {
       contentFrameBody = contentFrame.contentWindow.document.querySelector("body");
       if(contentFrameBody && contentFrameBody.children.length == 0) {
-        window.open(url.replace("//", "http://"), '_blank');
+        chrome.runtime.sendMessage({newTab: url});
         checked = true;
         iframeClose();
       }
