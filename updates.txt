@@ -1,3 +1,9 @@
+Version 1.5.2
+Fixed issue where popup instantly closes itself once opened.
+
+Version 1.5.1
+Links from reddit can now be opened in multiple tabs.
+
 Version 1.5.0
 If the popup loads a reddit page, all links on the popup will change the popup instead of opening in a new tab.
 

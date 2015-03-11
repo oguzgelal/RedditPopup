@@ -3,7 +3,7 @@
 
   "name": "Reddit Popup",
   "description": "This simple chrome extension lets you open Reddit links in a popup.",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "icons": {
     "16": "icon.png",
     "48": "icon.png",

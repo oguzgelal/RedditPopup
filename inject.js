@@ -152,7 +152,7 @@ function checkForBack() {
 	checked = true;
 	hasClosed = setInterval(function() {
 		contentFrameBody = contentFrame.contentWindow.document.querySelector("body");
-		if(popupFrame.className == "fadeIn" && (document.location.hash.indexOf("#page=") == -1 || document.location.hash.replace("#page=", "") != contentFrame.src.replace(/http.?:\/\//, "//") || (contentFrameBody && contentFrameBody.children.length == 0))) {
+		if(document.location.hash.indexOf("#page=") == -1 || document.location.hash.replace("#page=", "") != contentFrame.src.replace(/http.?:\/\//, "//") || (contentFrameBody && contentFrameBody.children.length == 0)) {
 			iframeClose();
 		}
 	}, 100);
