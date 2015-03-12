@@ -48,7 +48,7 @@ closeButton.addEventListener("mouseup", function(){
 });
 
 browseButton.addEventListener("mouseup", function(){
-	chrome.runtime.sendMessage({newTab: contentFrame.src});
+	chrome.runtime.sendMessage({newTab: contentFrame.src, makeActiveTab: true});
 	iframeClose();
 });
 
@@ -85,7 +85,7 @@ function scanLinks(container) {
 		links[i].addEventListener("click", function(e) {
 			e.preventDefault();
 			if(e.ctrlKey || e.metaKey){
-				chrome.runtime.sendMessage({newTab: this.href});
+				chrome.runtime.sendMessage({newTab: this.href, makeActiveTab: false});
 			} else {
 				iframeOpen(this.href, this.innerHTML);
 			}
@@ -97,7 +97,7 @@ function scanLinks(container) {
 // Open up iframe
 function iframeOpen(url, title){
   if (!allowedUrl(url)){
-     chrome.runtime.sendMessage({newTab: url});
+     chrome.runtime.sendMessage({newTab: url, makeActiveTab: true});
   } else {
     // Disable page scroll
     body.style.overflow = "hidden";
@@ -111,7 +111,7 @@ function iframeOpen(url, title){
     failedToLoad = setTimeout(function() {
       contentFrameBody = contentFrame.contentWindow.document.querySelector("body");
       if(contentFrameBody && contentFrameBody.children.length == 0) {
-        chrome.runtime.sendMessage({newTab: url});
+        chrome.runtime.sendMessage({newTab: url, makeActiveTab: true});
         checked = true;
         iframeClose();
       }

@@ -1,3 +1,6 @@
+Version 1.5.3
+Opening links with Ctrl/Cmd click will no longer make the newly opened tab the active tab.
+
 Version 1.5.2
 Fixed issue where popup instantly closes itself once opened.
 
