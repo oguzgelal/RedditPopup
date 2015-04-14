@@ -37,6 +37,9 @@ var body = document.body;
 body.appendChild(popupFrame);
 
 scanLinks(body);
+detectNewPosts(body, function() {
+	scanLinks(body);
+});
 
 openButton.addEventListener("mouseup", function(){
 	clearInterval(hasClosed);
@@ -82,15 +85,18 @@ contentFrame.addEventListener("load", function() {
 function scanLinks(container) {
 	var links = container.querySelectorAll("a.title, a.thumbnail, .md a, a.author, .deepthread a, .pagename a, a.reddit-link-title, a.subreddit, a.comments, .domain a");
 	for(var i = 0; i < links.length; i++) {
-		links[i].addEventListener("click", function(e) {
-			e.preventDefault();
-			if(e.ctrlKey || e.metaKey){
-				chrome.runtime.sendMessage({newTab: this.href, makeActiveTab: false});
-			} else {
-				iframeOpen(this.href, this.innerHTML);
-			}
-			return false;
-		})
+		if(!links[i].dataset.popup) {
+			links[i].dataset.popup = true;
+			links[i].addEventListener("click", function(e) {
+				e.preventDefault();
+				if(e.ctrlKey || e.metaKey){
+					chrome.runtime.sendMessage({newTab: this.href, makeActiveTab: false});
+				} else {
+					iframeOpen(this.href, this.innerHTML);
+				}
+				return false;
+			});
+		}
 	}
 }
 
@@ -156,4 +162,17 @@ function checkForBack() {
 			iframeClose();
 		}
 	}, 100);
+}
+
+function detectNewPosts(element, callback) {
+	var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+	if(MutationObserver) {
+		var obs = new MutationObserver(function(mutations, observer) {
+			if(mutations[0].addedNodes.length > 0) callback();
+		});
+		obs.observe(element, {childList: true, subtree: true});
+	} else {
+		element.addEventListener("DOMNodeInserted", callback);
+		element.addEventListener("DOMNodeRemoved", callback);
+	}
 }

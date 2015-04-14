@@ -1,3 +1,6 @@
+Version 1.5.4
+Added check to ensure that click listeners to open the popup will never be applied to the same link twice.  Also added checking for if new elements are added and if so, add the listeners to them as well.
+
 Version 1.5.3
 Opening links with Ctrl/Cmd click will no longer make the newly opened tab the active tab.
 
