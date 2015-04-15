@@ -37,6 +37,9 @@ var body = document.body;
 body.appendChild(popupFrame);
 
 scanLinks(body);
+detectNewPosts(body, function() {
+	scanLinks(body);
+});
 
 openButton.addEventListener("mouseup", function(){
 	clearInterval(hasClosed);
@@ -48,7 +51,7 @@ closeButton.addEventListener("mouseup", function(){
 });
 
 browseButton.addEventListener("mouseup", function(){
-	chrome.runtime.sendMessage({newTab: contentFrame.src});
+	chrome.runtime.sendMessage({newTab: contentFrame.src, makeActiveTab: true});
 	iframeClose();
 });
 
@@ -82,22 +85,25 @@ contentFrame.addEventListener("load", function() {
 function scanLinks(container) {
 	var links = container.querySelectorAll("a.title, a.thumbnail, .md a, a.author, .deepthread a, .pagename a, a.reddit-link-title, a.subreddit, a.comments, .domain a");
 	for(var i = 0; i < links.length; i++) {
-		links[i].addEventListener("click", function(e) {
-			e.preventDefault();
-			if(e.ctrlKey || e.metaKey){
-				chrome.runtime.sendMessage({newTab: this.href});
-			} else {
-				iframeOpen(this.href, this.innerHTML);
-			}
-			return false;
-		})
+		if(!links[i].dataset.popup) {
+			links[i].dataset.popup = true;
+			links[i].addEventListener("click", function(e) {
+				e.preventDefault();
+				if(e.ctrlKey || e.metaKey){
+					chrome.runtime.sendMessage({newTab: this.href, makeActiveTab: false});
+				} else {
+					iframeOpen(this.href, this.innerHTML);
+				}
+				return false;
+			});
+		}
 	}
 }
 
 // Open up iframe
 function iframeOpen(url, title){
   if (!allowedUrl(url)){
-     chrome.runtime.sendMessage({newTab: url});
+     chrome.runtime.sendMessage({newTab: url, makeActiveTab: true});
   } else {
     // Disable page scroll
     body.style.overflow = "hidden";
@@ -111,7 +117,7 @@ function iframeOpen(url, title){
     failedToLoad = setTimeout(function() {
       contentFrameBody = contentFrame.contentWindow.document.querySelector("body");
       if(contentFrameBody && contentFrameBody.children.length == 0) {
-        chrome.runtime.sendMessage({newTab: url});
+        chrome.runtime.sendMessage({newTab: url, makeActiveTab: true});
         checked = true;
         iframeClose();
       }
@@ -152,8 +158,21 @@ function checkForBack() {
 	checked = true;
 	hasClosed = setInterval(function() {
 		contentFrameBody = contentFrame.contentWindow.document.querySelector("body");
-		if(popupFrame.className == "fadeIn" && (document.location.hash.indexOf("#page=") == -1 || document.location.hash.replace("#page=", "") != contentFrame.src.replace(/http.?:\/\//, "//") || (contentFrameBody && contentFrameBody.children.length == 0))) {
+		if(document.location.hash.indexOf("#page=") == -1 || document.location.hash.replace("#page=", "") != contentFrame.src.replace(/http.?:\/\//, "//") || (contentFrameBody && contentFrameBody.children.length == 0)) {
 			iframeClose();
 		}
 	}, 100);
+}
+
+function detectNewPosts(element, callback) {
+	var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+	if(MutationObserver) {
+		var obs = new MutationObserver(function(mutations, observer) {
+			if(mutations[0].addedNodes.length > 0) callback();
+		});
+		obs.observe(element, {childList: true, subtree: true});
+	} else {
+		element.addEventListener("DOMNodeInserted", callback);
+		element.addEventListener("DOMNodeRemoved", callback);
+	}
 }
