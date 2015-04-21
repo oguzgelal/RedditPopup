@@ -5,9 +5,7 @@ Reddit Popup
 
 This simple chrome extension lets you open Reddit links in a popup.
 
-More information : http://oguzgelal.com/redditpopup
-
-**UPDATE** There is a version for Product Hunt, too ! http://oguzgelal.com/producthunt
+More information : http://reddit.oguzgelal.com
 
 ### Feedback
 
